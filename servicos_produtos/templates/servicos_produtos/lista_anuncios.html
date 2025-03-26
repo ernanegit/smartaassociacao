@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Anúncios - Associação de Moradores{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Anúncios</h1>
+        {% if user.is_authenticated %}
+            <a href="{% url 'servicos:novo_anuncio' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Novo Anúncio
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="tipo" class="form-label">Tipo</label>
+                            <select name="tipo" id="tipo" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="servico" {% if request.GET.tipo == 'servico' %}selected{% endif %}>Serviços</option>
+                                <option value="produto" {% if request.GET.tipo == 'produto' %}selected{% endif %}>Produtos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="categoria" class="form-label">Categoria</label>
+                            <select name="categoria" id="categoria" class="form-select">
+                                <option value="">Todas</option>
+                                <option value="construcao" {% if request.GET.categoria == 'construcao' %}selected{% endif %}>Construção</option>
+                                <option value="limpeza" {% if request.GET.categoria == 'limpeza' %}selected{% endif %}>Limpeza</option>
+                                <option value="jardinagem" {% if request.GET.categoria == 'jardinagem' %}selected{% endif %}>Jardinagem</option>
+                                <option value="outros" {% if request.GET.categoria == 'outros' %}selected{% endif %}>Outros</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Filtrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if anuncios %}
+        <div class="row">
+            {% for anuncio in anuncios %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        {% if anuncio.imagem %}
+                            <img src="{{ anuncio.imagem.url }}" class="card-img-top" alt="{{ anuncio.titulo }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ anuncio.titulo }}</h5>
+                            <p class="card-text text-muted">
+                                <small>
+                                    <i class="fas fa-user"></i> {{ anuncio.criador.get_full_name }}
+                                </small>
+                            </p>
+                            <div class="mb-2">
+                                <span class="badge {% if anuncio.tipo == 'servico' %}bg-primary{% else %}bg-success{% endif %} me-2">
+                                    {{ anuncio.get_tipo_display }}
+                                </span>
+                                <span class="badge bg-secondary">
+                                    {{ anuncio.get_categoria_display }}
+                                </span>
+                            </div>
+                            <p class="card-text">{{ anuncio.descricao|truncatewords:30 }}</p>
+                            {% if anuncio.preco %}
+                                <p class="card-text">
+                                    <strong>Preço:</strong> R$ {{ anuncio.preco|floatformat:2 }}
+                                </p>
+                            {% endif %}
+                            <a href="{% url 'servicos:detalhe_anuncio' anuncio.id %}" class="btn btn-outline-primary">
+                                Ver Detalhes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-store fa-3x text-muted mb-3"></i>
+            <h3>Nenhum anúncio encontrado</h3>
+            <p class="text-muted">Não há anúncios disponíveis no momento.</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'servicos:novo_anuncio' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Criar Primeiro Anúncio
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

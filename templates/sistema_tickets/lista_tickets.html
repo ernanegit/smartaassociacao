@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meus Tickets - Associação de Moradores{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Meus Tickets</h1>
+        <a href="{% url 'sistema_tickets:criar_ticket' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Novo Ticket
+        </a>
+    </div>
+
+    {% if tickets %}
+        <div class="row">
+            {% for ticket in tickets %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        {% if ticket.imagem %}
+                            <img src="{{ ticket.imagem.url }}" class="card-img-top" alt="{{ ticket.titulo }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ ticket.titulo }}</h5>
+                            <p class="card-text">{{ ticket.descricao|truncatewords:30 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge {% if ticket.status == 'aberto' %}bg-success
+                                                  {% elif ticket.status == 'em_andamento' %}bg-warning
+                                                  {% elif ticket.status == 'resolvido' %}bg-info
+                                                  {% else %}bg-secondary{% endif %}">
+                                    {{ ticket.get_status_display }}
+                                </span>
+                                <small class="text-muted">{{ ticket.data_criacao|date:"d/m/Y" }}</small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'sistema_tickets:detalhe_ticket' ticket.id %}" class="btn btn-outline-primary btn-sm">
+                                Ver Detalhes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> Você ainda não criou nenhum ticket.
+            <a href="{% url 'sistema_tickets:criar_ticket' %}" class="alert-link">Criar um novo ticket</a>.
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

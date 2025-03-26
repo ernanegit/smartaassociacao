@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Minhas Notificações{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Minhas Notificações</h5>
+                    {% if notificacoes %}
+                        <button class="btn btn-sm btn-primary" id="marcar-todas-lidas">
+                            Marcar todas como lidas
+                        </button>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if notificacoes %}
+                        <div class="list-group">
+                            {% for notificacao in notificacoes %}
+                                <a href="{% url 'notificacoes:detalhe' notificacao.slug %}" 
+                                   class="list-group-item list-group-item-action {% if not notificacao.lida %}list-group-item-light{% endif %}">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ notificacao.titulo }}</h6>
+                                        <small>{{ notificacao.data_criacao|timesince }} atrás</small>
+                                    </div>
+                                    <p class="mb-1">{{ notificacao.mensagem|truncatewords:30 }}</p>
+                                    <small class="text-muted">{{ notificacao.get_tipo_display }}</small>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            Você não tem notificações no momento.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const marcarTodasLidasBtn = document.getElementById('marcar-todas-lidas');
+    if (marcarTodasLidasBtn) {
+        marcarTodasLidasBtn.addEventListener('click', function() {
+            fetch('{% url "notificacoes:marcar_todas_lidas" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    location.reload();
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Logout - Associação de Moradores{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h2 class="card-title mb-4">Você foi desconectado</h2>
+                    <p class="card-text">
+                        Obrigado por usar nosso sistema. Até a próxima!
+                    </p>
+                    <a href="{% url 'login' %}" class="btn btn-primary">Entrar Novamente</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

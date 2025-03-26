@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ anuncio.titulo }} - Associação de Moradores{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h1 class="h3 mb-0">{{ anuncio.titulo }}</h1>
+                    <div>
+                        <span class="badge {% if anuncio.tipo == 'servico' %}bg-primary{% else %}bg-success{% endif %} me-2">
+                            {{ anuncio.get_tipo_display }}
+                        </span>
+                        <span class="badge bg-secondary">
+                            {{ anuncio.get_categoria_display }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if anuncio.imagem %}
+                        <img src="{{ anuncio.imagem.url }}" class="img-fluid rounded mb-4" alt="{{ anuncio.titulo }}">
+                    {% endif %}
+                    
+                    <div class="mb-4">
+                        <h5 class="card-title">Descrição</h5>
+                        <p class="card-text">{{ anuncio.descricao|linebreaks }}</p>
+                    </div>
+
+                    {% if anuncio.preco %}
+                        <div class="mb-4">
+                            <h5 class="card-title">Preço</h5>
+                            <p class="card-text h4 text-primary">R$ {{ anuncio.preco|floatformat:2 }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if anuncio.contato %}
+                        <div class="mb-4">
+                            <h5 class="card-title">Contato</h5>
+                            <p class="card-text">{{ anuncio.contato|linebreaks }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if anuncio.local %}
+                        <div class="mb-4">
+                            <h5 class="card-title">Local</h5>
+                            <p class="card-text">{{ anuncio.local|linebreaks }}</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted">
+                            <small>
+                                <i class="fas fa-calendar"></i> Criado em {{ anuncio.data_criacao|date:"d/m/Y H:i" }}
+                            </small>
+                        </div>
+                        {% if user == anuncio.criador %}
+                            <div>
+                                <a href="{% url 'servicos:editar_anuncio' anuncio.id %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h4 mb-0">Avaliações</h2>
+                </div>
+                <div class="card-body">
+                    {% if anuncio.avaliacoes.all %}
+                        {% for avaliacao in anuncio.avaliacoes.all %}
+                            <div class="d-flex mb-4">
+                                <div class="flex-shrink-0">
+                                    <img src="{% static 'img/default-avatar.png' %}" class="rounded-circle" width="40" height="40" alt="{{ avaliacao.avaliador.get_full_name }}">
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-1">{{ avaliacao.avaliador.get_full_name }}</h5>
+                                        <small class="text-muted">{{ avaliacao.data_criacao|date:"d/m/Y H:i" }}</small>
+                                    </div>
+                                    <div class="mb-2">
+                                        {% for i in "12345"|make_list %}
+                                            <i class="fas fa-star {% if forloop.counter <= avaliacao.nota %}text-warning{% else %}text-muted{% endif %}"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="mb-0">{{ avaliacao.comentario|linebreaks }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center mb-0">Nenhuma avaliação ainda.</p>
+                    {% endif %}
+
+                    {% if user.is_authenticated and user != anuncio.criador %}
+                        <form method="post" action="{% url 'servicos:avaliar_anuncio' anuncio.id %}" class="mt-4">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label">Sua avaliação</label>
+                                <div class="rating">
+                                    <input type="radio" name="nota" value="5" id="star5" required>
+                                    <label for="star5"><i class="fas fa-star"></i></label>
+                                    <input type="radio" name="nota" value="4" id="star4">
+                                    <label for="star4"><i class="fas fa-star"></i></label>
+                                    <input type="radio" name="nota" value="3" id="star3">
+                                    <label for="star3"><i class="fas fa-star"></i></label>
+                                    <input type="radio" name="nota" value="2" id="star2">
+                                    <label for="star2"><i class="fas fa-star"></i></label>
+                                    <input type="radio" name="nota" value="1" id="star1">
+                                    <label for="star1"><i class="fas fa-star"></i></label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comentario" class="form-label">Seu comentário</label>
+                                <textarea name="comentario" id="comentario" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Enviar Avaliação
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h4 mb-0">Informações</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3">
+                            <i class="fas fa-user text-primary me-2"></i>
+                            <strong>Anunciante:</strong> {{ anuncio.criador.get_full_name }}
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-calendar text-primary me-2"></i>
+                            <strong>Data de criação:</strong> {{ anuncio.data_criacao|date:"d/m/Y H:i" }}
+                        </li>
+                        <li>
+                            <i class="fas fa-clock text-primary me-2"></i>
+                            <strong>Última atualização:</strong> {{ anuncio.data_atualizacao|date:"d/m/Y H:i" }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #ddd;
+    padding: 0 0.1rem;
+}
+
+.rating input:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+    color: #ffd700;
+}
+</style>
+{% endblock %} 

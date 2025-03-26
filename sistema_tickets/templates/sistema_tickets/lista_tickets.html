@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meus Tickets - Associação de Moradores{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Meus Tickets</h1>
+        <a href="{% url 'tickets:novo_ticket' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Novo Ticket
+        </a>
+    </div>
+
+    {% if tickets %}
+        <div class="row">
+            {% for ticket in tickets %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        {% if ticket.imagem %}
+                            <img src="{{ ticket.imagem.url }}" class="card-img-top" alt="{{ ticket.titulo }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ ticket.titulo }}</h5>
+                            <p class="card-text text-muted">
+                                <small>
+                                    <i class="fas fa-calendar"></i> {{ ticket.data_criacao|date:"d/m/Y H:i" }}
+                                </small>
+                            </p>
+                            <div class="mb-2">
+                                <span class="badge {% if ticket.status == 'aberto' %}bg-success{% elif ticket.status == 'em_andamento' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                    {{ ticket.get_status_display }}
+                                </span>
+                                <span class="badge {% if ticket.prioridade == 'baixa' %}bg-info{% elif ticket.prioridade == 'media' %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ ticket.get_prioridade_display }}
+                                </span>
+                            </div>
+                            <p class="card-text">{{ ticket.descricao|truncatewords:30 }}</p>
+                            <a href="{% url 'tickets:detalhe_ticket' ticket.id %}" class="btn btn-outline-primary">
+                                Ver Detalhes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-ticket-alt fa-3x text-muted mb-3"></i>
+            <h3>Nenhum ticket encontrado</h3>
+            <p class="text-muted">Você ainda não criou nenhum ticket.</p>
+            <a href="{% url 'tickets:novo_ticket' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Criar Primeiro Ticket
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

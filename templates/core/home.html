@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Início - Associação de Moradores{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-4">Bem-vindo à Associação de Moradores</h1>
+            <p class="lead text-center">
+                Sistema de gerenciamento de tickets e serviços para nossa comunidade.
+            </p>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+        <div class="row mb-5">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-ticket-alt fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Sistema de Tickets</h3>
+                        <p class="card-text">
+                            Abra tickets para solicitar serviços, reportar problemas ou fazer sugestões.
+                        </p>
+                        <a href="{% url 'sistema_tickets:lista_tickets' %}" class="btn btn-primary">
+                            Ver Tickets
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-store fa-3x text-success mb-3"></i>
+                        <h3 class="card-title">Serviços e Produtos</h3>
+                        <p class="card-text">
+                            Explore serviços e produtos oferecidos por moradores da comunidade.
+                        </p>
+                        <a href="{% url 'servicos_produtos:lista_anuncios' %}" class="btn btn-success">
+                            Ver Serviços
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Seus Tickets Recentes</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if tickets_recentes %}
+                            <div class="list-group">
+                                {% for ticket in tickets_recentes %}
+                                    <a href="{% url 'sistema_tickets:detalhe_ticket' ticket.id %}" 
+                                       class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">{{ ticket.titulo }}</h6>
+                                            <small>{{ ticket.data_criacao|date:"d/m/Y" }}</small>
+                                        </div>
+                                        <p class="mb-1">{{ ticket.descricao|truncatewords:20 }}</p>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted">Você ainda não criou nenhum ticket.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">Seus Anúncios Recentes</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if anuncios_recentes %}
+                            <div class="list-group">
+                                {% for anuncio in anuncios_recentes %}
+                                    <a href="{% url 'servicos_produtos:detalhe_anuncio' anuncio.id %}" 
+                                       class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">{{ anuncio.titulo }}</h6>
+                                            <small>{{ anuncio.data_criacao|date:"d/m/Y" }}</small>
+                                        </div>
+                                        <p class="mb-1">{{ anuncio.descricao|truncatewords:20 }}</p>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted">Você ainda não criou nenhum anúncio.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title mb-4">Faça login para acessar o sistema</h3>
+                        <p class="card-text mb-4">
+                            Para acessar todas as funcionalidades do sistema, você precisa fazer login.
+                            Entre em contato com o administrador para criar uma conta.
+                        </p>
+                        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                            <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4 gap-3">Entrar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

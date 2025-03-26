@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Sidebar com categorias -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Categorias</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'blog:lista_posts' %}" 
+                       class="list-group-item list-group-item-action {% if not categoria_atual %}active{% endif %}">
+                        Todas
+                    </a>
+                    {% for categoria in categorias %}
+                        <a href="{% url 'blog:categoria' categoria.slug %}" 
+                           class="list-group-item list-group-item-action {% if categoria_atual == categoria.slug %}active{% endif %}">
+                            {{ categoria.nome }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Formulário de busca -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Buscar</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'blog:lista_posts' %}">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Buscar posts..." value="{{ query }}">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo principal -->
+        <div class="col-md-9">
+            {% block blog_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

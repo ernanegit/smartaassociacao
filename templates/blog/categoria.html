@@ -1,0 +1,81 @@
+{% extends 'blog/base_blog.html' %}
+{% load static %}
+
+{% block blog_content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-folder"></i> Posts na categoria: {{ categoria.nome }}
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if categoria.descricao %}
+            <p class="card-text">{{ categoria.descricao }}</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if posts %}
+    {% for post in posts %}
+        <article class="card mb-4">
+            {% if post.imagem %}
+                <img src="{{ post.imagem.url }}" class="card-img-top" alt="{{ post.titulo }}">
+            {% endif %}
+            <div class="card-body">
+                <h2 class="card-title h4">
+                    <a href="{% url 'blog:detalhe_post' post.slug %}" class="text-decoration-none">
+                        {{ post.titulo }}
+                    </a>
+                </h2>
+                <p class="card-text">{{ post.conteudo|truncatewords:50|safe }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-secondary">{{ post.get_status_display }}</span>
+                    </div>
+                    <small class="text-muted">
+                        Por {{ post.autor.get_full_name|default:post.autor.username }} em {{ post.data_criacao|date:"d/m/Y" }}
+                    </small>
+                </div>
+            </div>
+        </article>
+    {% endfor %}
+
+    {% if is_paginated %}
+        <nav aria-label="Navegação de páginas">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                            <i class="fas fa-chevron-left"></i> Anterior
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                            Próxima <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Nenhum post encontrado nesta categoria.
+    </div>
+{% endif %}
+{% endblock %} 

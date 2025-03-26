@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Perfil - Associação de Moradores{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                {% if user.perfilmorador.foto_perfil %}
+                    <img src="{{ user.perfilmorador.foto_perfil.url }}" alt="Foto de perfil" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                {% else %}
+                    <i class="fas fa-user-circle fa-5x text-primary mb-3"></i>
+                {% endif %}
+                <h3 class="card-title">{{ user.get_full_name }}</h3>
+                <p class="text-muted">{{ user.email }}</p>
+                <a href="{% url 'usuarios:editar_perfil' %}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Editar Perfil
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Informações do Perfil</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>CPF:</strong> {{ user.perfilmorador.cpf }}</p>
+                        <p><strong>Telefone:</strong> {{ user.perfilmorador.telefone }}</p>
+                        <p><strong>Data de Nascimento:</strong> {{ user.perfilmorador.data_nascimento|date:"d/m/Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Endereço:</strong> {{ user.perfilmorador.endereco }}</p>
+                        <p><strong>Número:</strong> {{ user.perfilmorador.numero_casa }}</p>
+                        <p><strong>Membro desde:</strong> {{ user.perfilmorador.data_cadastro|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Minhas Atividades</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'tickets:lista_tickets' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-ticket-alt"></i> Meus Tickets
+                            </a>
+                            <a href="{% url 'servicos:lista_anuncios' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-store"></i> Meus Anúncios
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

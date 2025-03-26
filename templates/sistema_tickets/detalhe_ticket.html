@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ ticket.titulo }} - Associação de Moradores{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">{{ ticket.titulo }}</h1>
+        <a href="{% url 'sistema_tickets:lista_tickets' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge {% if ticket.status == 'aberto' %}bg-success
+                                  {% elif ticket.status == 'em_andamento' %}bg-warning
+                                  {% elif ticket.status == 'resolvido' %}bg-info
+                                  {% else %}bg-secondary{% endif %}">
+                    {{ ticket.get_status_display }}
+                </span>
+                <small class="text-muted">Criado em {{ ticket.data_criacao|date:"d/m/Y H:i" }}</small>
+            </div>
+            
+            <p class="card-text">{{ ticket.descricao }}</p>
+            
+            {% if ticket.imagem %}
+                <img src="{{ ticket.imagem.url }}" class="img-fluid rounded mb-3" alt="{{ ticket.titulo }}">
+            {% endif %}
+        </div>
+    </div>
+
+    <h2 class="h4 mb-3">Comentários</h2>
+    
+    {% if comentarios %}
+        {% for comentario in comentarios %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong>{{ comentario.autor.get_full_name|default:comentario.autor.username }}</strong>
+                        <small class="text-muted">{{ comentario.data_criacao|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    <p class="card-text">{{ comentario.texto }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> Nenhum comentário ainda.
+        </div>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="texto" class="form-label">Adicionar Comentário</label>
+                <textarea name="texto" id="texto" class="form-control" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Enviar Comentário
+            </button>
+        </form>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> Você precisa estar logado para comentar.
+            <a href="{% url 'login' %}" class="alert-link">Fazer login</a>.
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

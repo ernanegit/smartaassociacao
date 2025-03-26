@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-file-alt"></i> {{ ata.titulo }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p class="mb-1">
+                                <strong><i class="fas fa-calendar"></i> Data da Reunião:</strong>
+                                {{ ata.data_reuniao|date:"d/m/Y" }}
+                            </p>
+                            <p class="mb-1">
+                                <strong><i class="fas fa-user"></i> Autor:</strong>
+                                {{ ata.autor.get_full_name|default:ata.autor.username }}
+                            </p>
+                            <p class="mb-1">
+                                <strong><i class="fas fa-folder"></i> Categoria:</strong>
+                                {{ ata.get_categoria_display }}
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <p class="mb-1">
+                                <strong><i class="fas fa-download"></i> Downloads:</strong>
+                                {{ ata.downloads }}
+                            </p>
+                            <p class="mb-1">
+                                <strong><i class="fas fa-clock"></i> Publicado em:</strong>
+                                {{ ata.data_publicacao|date:"d/m/Y H:i" }}
+                            </p>
+                            {% if ata.destaque %}
+                                <span class="badge bg-warning">Destaque</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="mb-2">Descrição:</h6>
+                        <p class="card-text">{{ ata.descricao }}</p>
+                    </div>
+
+                    {% if ata.arquivo %}
+                        <div class="text-center">
+                            <a href="{{ ata.arquivo.url }}" class="btn btn-primary" download>
+                                <i class="fas fa-download"></i> Baixar Ata
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> Nenhum arquivo disponível para download.
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'atas:lista_atas' %}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Voltar para Lista
+                        </a>
+                        {% if user.is_staff %}
+                            <div>
+                                <a href="{% url 'atas:editar_ata' ata.slug %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

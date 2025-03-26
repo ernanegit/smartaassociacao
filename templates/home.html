@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Início - Associação de Moradores{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center py-5">
+                <h1 class="display-4">Bem-vindo à Associação de Moradores</h1>
+                <p class="lead">Unindo nossa comunidade para um bairro melhor</p>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'usuarios:registro' %}" class="btn btn-light btn-lg mt-3">
+                        <i class="fas fa-user-plus"></i> Cadastre-se
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-ticket-alt fa-3x text-primary mb-3"></i>
+                <h3 class="card-title">Tickets</h3>
+                <p class="card-text">Envie suas reivindicações e acompanhe o status de suas solicitações.</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'tickets:lista_tickets' %}" class="btn btn-primary">
+                        Ver Tickets
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary">
+                        Entrar para Acessar
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-store fa-3x text-primary mb-3"></i>
+                <h3 class="card-title">Serviços e Produtos</h3>
+                <p class="card-text">Explore serviços e produtos oferecidos por moradores da comunidade.</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'servicos:lista_anuncios' %}" class="btn btn-primary">
+                        Ver Anúncios
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary">
+                        Entrar para Acessar
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                <h3 class="card-title">Comunidade</h3>
+                <p class="card-text">Faça parte da nossa comunidade e contribua para o desenvolvimento do bairro.</p>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'usuarios:registro' %}" class="btn btn-primary">
+                        Cadastre-se
+                    </a>
+                {% else %}
+                    <a href="{% url 'usuarios:perfil' %}" class="btn btn-primary">
+                        Meu Perfil
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title">Últimos Tickets</h4>
+                {% if ultimos_tickets %}
+                    <div class="list-group">
+                        {% for ticket in ultimos_tickets %}
+                            <a href="{% url 'tickets:detalhe_ticket' ticket.id %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ ticket.titulo }}</h5>
+                                    <small>{{ ticket.data_criacao|date:"d/m/Y" }}</small>
+                                </div>
+                                <p class="mb-1">{{ ticket.descricao|truncatewords:20 }}</p>
+                                <small>Status: {{ ticket.get_status_display }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Nenhum ticket recente.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title">Últimos Anúncios</h4>
+                {% if ultimos_anuncios %}
+                    <div class="list-group">
+                        {% for anuncio in ultimos_anuncios %}
+                            <a href="{% url 'servicos:detalhe_anuncio' anuncio.id %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ anuncio.titulo }}</h5>
+                                    <small>{{ anuncio.data_criacao|date:"d/m/Y" }}</small>
+                                </div>
+                                <p class="mb-1">{{ anuncio.descricao|truncatewords:20 }}</p>
+                                <small>Preço: R$ {{ anuncio.preco }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Nenhum anúncio recente.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

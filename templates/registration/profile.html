@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Meu Perfil - Associação de Moradores{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-circle fa-5x text-primary mb-3"></i>
+                    <h3 class="card-title">{{ user.get_full_name }}</h3>
+                    <p class="text-muted">{{ user.username }}</p>
+                    <p class="text-muted">{{ user.email }}</p>
+                    <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary">Editar Perfil</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Minhas Atividades</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Tickets</h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Total de Tickets
+                                    <span class="badge bg-primary rounded-pill">{{ total_tickets }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Tickets Abertos
+                                    <span class="badge bg-warning rounded-pill">{{ tickets_abertos }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Tickets Fechados
+                                    <span class="badge bg-success rounded-pill">{{ tickets_fechados }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Anúncios</h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Total de Anúncios
+                                    <span class="badge bg-primary rounded-pill">{{ total_anuncios }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Anúncios Ativos
+                                    <span class="badge bg-success rounded-pill">{{ anuncios_ativos }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Avaliações Recebidas
+                                    <span class="badge bg-info rounded-pill">{{ total_avaliacoes }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Atividades Recentes</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for atividade in atividades_recentes %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ atividade.titulo }}</h6>
+                                    <small>{{ atividade.data|date:"d/m/Y H:i" }}</small>
+                                </div>
+                                <p class="mb-1">{{ atividade.descricao }}</p>
+                                <small class="text-muted">{{ atividade.tipo }}</small>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted mb-0">Nenhuma atividade recente.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

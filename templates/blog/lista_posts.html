@@ -1,0 +1,84 @@
+{% extends 'blog/base_blog.html' %}
+{% load static %}
+
+{% block blog_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Blog</h1>
+    {% if user.is_authenticated %}
+        <a href="{% url 'blog:criar_post' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Novo Post
+        </a>
+    {% endif %}
+</div>
+
+{% if posts %}
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    {% if post.imagem %}
+                        <img src="{{ post.imagem.url }}" class="card-img-top" alt="{{ post.titulo }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.titulo }}</h5>
+                        <p class="card-text">{{ post.conteudo|truncatewords:30|safe }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">{{ post.categoria.nome }}</span>
+                            <small class="text-muted">{{ post.data_criacao|date:"d/m/Y" }}</small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'blog:detalhe_post' post.slug %}" class="btn btn-outline-primary btn-sm">
+                            Ler mais
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginação -->
+    {% if posts.has_other_pages %}
+        <nav aria-label="Navegação de páginas" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if posts.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ posts.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
+                            Anterior
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in posts.paginator.page_range %}
+                    {% if posts.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ posts.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
+                            Próxima
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Nenhum post encontrado.
+        {% if user.is_authenticated %}
+            <a href="{% url 'blog:criar_post' %}" class="alert-link">Criar um novo post</a>.
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %} 
