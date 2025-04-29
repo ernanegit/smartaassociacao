@@ -19,16 +19,16 @@ def home(request):
     # Posts recentes do blog
     context['posts_recentes'] = Post.objects.filter(
         status='publicado'
-    ).order_by('-data_publicacao')[:5]
+    ).order_by('-data_criacao')[:5]
     
     # Atas recentes
     context['atas_recentes'] = Ata.objects.filter(
-        publicado=True
+        destaque=True  # Substituí 'publicado=True' por 'destaque=True' já que este campo existe no modelo Ata
     ).order_by('-data_reuniao')[:5]
     
     # Anúncios recentes
     context['anuncios_recentes'] = Anuncio.objects.filter(
-        ativo=True
+        status='ativo'  # Substituí 'ativo=True' por 'status='ativo'' que é o formato correto
     ).order_by('-data_criacao')[:5]
     
     return render(request, 'core/home.html', context)
@@ -53,7 +53,7 @@ def profile(request):
     
     # Estatísticas de anúncios
     total_anuncios = Anuncio.objects.filter(criador=request.user).count()
-    anuncios_ativos = Anuncio.objects.filter(criador=request.user).count()  # Todos os anúncios são considerados ativos
+    anuncios_ativos = Anuncio.objects.filter(criador=request.user, status='ativo').count()
     total_avaliacoes = Avaliacao.objects.filter(anuncio__criador=request.user).count()
     
     # Atividades recentes
@@ -100,7 +100,7 @@ def profile_edit(request):
         form = UserProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('profile')
+            return redirect('core:profile')
     else:
         form = UserProfileForm(instance=request.user)
-    return render(request, 'registration/register.html', {'form': form}) 
+    return render(request, 'registration/profile_edit.html', {'form': form})

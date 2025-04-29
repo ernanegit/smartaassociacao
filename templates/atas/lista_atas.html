@@ -19,7 +19,7 @@
                                     <div class="card h-100">
                                         <div class="card-body">
                                             <h5 class="card-title">
-                                                <a href="{% url 'atas:detalhe_ata' ata.slug %}" class="text-decoration-none">
+                                                <a href="{% url 'atas:detalhe_ata' ata.id %}" class="text-decoration-none">
                                                     {{ ata.titulo }}
                                                 </a>
                                             </h5>
@@ -41,7 +41,7 @@
                                                 <small class="text-muted">
                                                     <i class="fas fa-download"></i> {{ ata.downloads }} downloads
                                                 </small>
-                                                <a href="{% url 'atas:detalhe_ata' ata.slug %}" class="btn btn-outline-primary btn-sm">
+                                                <a href="{% url 'atas:detalhe_ata' ata.id %}" class="btn btn-outline-primary btn-sm">
                                                     <i class="fas fa-eye"></i> Ver Detalhes
                                                 </a>
                                             </div>
@@ -94,4 +94,4 @@
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}
