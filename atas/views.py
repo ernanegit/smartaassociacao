@@ -64,7 +64,7 @@ def criar_ata(request):
             ata.autor = request.user
             ata.save()
             messages.success(request, 'Ata criada com sucesso!')
-            return redirect('atas:detalhe_ata', pk=ata.pk)
+            return redirect('atas:detalhe_ata', pk=ata.id)
     else:
         form = AtaForm()
     
@@ -82,7 +82,7 @@ def editar_ata(request, pk):
         if form.is_valid():
             ata = form.save()
             messages.success(request, 'Ata atualizada com sucesso!')
-            return redirect('atas:detalhe_ata', pk=ata.pk)
+            return redirect('atas:detalhe_ata', pk=ata.id)
     else:
         form = AtaForm(instance=ata)
     

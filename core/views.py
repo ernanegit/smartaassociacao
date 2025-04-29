@@ -1,9 +1,10 @@
+# core/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from sistema_tickets.models import Ticket
 from blog.models import Post
-from atas.models import Ata
+from atas.models import Ata  # Corrigido para importar do app 'atas'
 from servicos_produtos.models import Anuncio, Avaliacao
 from .forms import UserRegistrationForm, UserProfileForm
 
@@ -23,26 +24,15 @@ def home(request):
     
     # Atas recentes
     context['atas_recentes'] = Ata.objects.filter(
-        destaque=True  # Substituí 'publicado=True' por 'destaque=True' já que este campo existe no modelo Ata
+        destaque=True
     ).order_by('-data_reuniao')[:5]
     
     # Anúncios recentes
     context['anuncios_recentes'] = Anuncio.objects.filter(
-        status='ativo'  # Substituí 'ativo=True' por 'status='ativo'' que é o formato correto
+        status='ativo'
     ).order_by('-data_criacao')[:5]
     
     return render(request, 'core/home.html', context)
-
-def register(request):
-    if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('core:home')
-    else:
-        form = UserRegistrationForm()
-    return render(request, 'registration/register.html', {'form': form})
 
 @login_required
 def profile(request):
