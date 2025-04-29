@@ -1,3 +1,4 @@
+# atas/forms.py
 from django import forms
 from .models import Ata
 
@@ -12,4 +13,4 @@ class AtaForm(forms.ModelForm):
             'data_reuniao': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'categoria': forms.Select(attrs={'class': 'form-control'}),
             'destaque': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        } 
+        }
